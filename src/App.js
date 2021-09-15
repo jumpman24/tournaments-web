@@ -4,6 +4,7 @@ import { Provider } from "use-http";
 
 import PlayersPage from "./pages/PlayersPage";
 import TournamentsPage from "./pages/TournamentsPage";
+import TournamentPage from "./pages/TournamentDetailsPage";
 
 const API_PUBLIC_URL =
   process.env.REACT_APP_API_PUBLIC_URL || "http://localhost:8000/api/v1";
@@ -14,9 +15,10 @@ const App = () => {
       <BrowserRouter>
         <CssBaseline />
         <Switch>
-          <Route path="/" component={PlayersPage} exact />
           <Route path="/players" component={PlayersPage} />
+          <Route path="/tournaments/:tournamentId" component={TournamentPage} />
           <Route path="/tournaments" component={TournamentsPage} />
+          <Route path="/" component={PlayersPage} exact />
         </Switch>
       </BrowserRouter>
     </Provider>

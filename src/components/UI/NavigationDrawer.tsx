@@ -13,7 +13,12 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
   "& .MuiDrawer-paper": { width: drawerWidth },
 }));
 
-const NavigationDrawer = (props) => {
+type Props = {
+  open: boolean;
+  onClose: () => void;
+};
+
+const NavigationDrawer = (props: Props) => {
   return (
     <StyledDrawer
       open={props.open}

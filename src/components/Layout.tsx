@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { Component, PropsWithChildren, useCallback, useState } from "react";
 import { AppBar, Grid, IconButton, Toolbar, styled } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 
@@ -6,7 +6,10 @@ import NavigationDrawer from "./UI/NavigationDrawer";
 
 const Cusion = styled("div")(({ theme }) => theme.mixins.toolbar);
 
-const Layout = (props) => {
+type Props = {
+  appBar: Component;
+};
+const Layout = (props: PropsWithChildren<Props>) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleDrawerOpen = useCallback(() => setDrawerOpen(true), []);

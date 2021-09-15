@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { ChangeEvent, MouseEvent, PropsWithChildren, useState } from "react";
+// @ts-ignore
 import CountryFlag from "react-country-flag";
 import {
   Box,
@@ -17,13 +18,27 @@ import LinkRouter from "../UI/LinkRouter";
 import { countryCodes } from "../../lib/country-codes";
 import { visuallyHidden } from "@mui/utils";
 
-const columns = [
+interface PlayerData {
+  id: number;
+  country: string;
+  last_name: string;
+  first_name: string;
+  rating: number;
+}
+
+interface Column {
+  id: keyof PlayerData;
+  label: string;
+}
+
+const columns: readonly Column[] = [
   { id: "country", label: "Country" },
-  { id: "full_name", label: "Full name" },
+  { id: "last_name", label: "Last name" },
+  { id: "first_name", label: "First name" },
   { id: "rating", label: "Rating" },
 ];
 
-function descendingComparator(a, b, orderBy) {
+function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -33,17 +48,26 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
-const getComparator = (order, orderBy) => {
+type Order = "asc" | "desc";
+
+const getComparator = (order: Order, orderBy: string) => {
   return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
+    ? (a: any, b: any) => descendingComparator(a, b, orderBy)
+    : (a: any, b: any) => -descendingComparator(a, b, orderBy);
 };
-const SortableTableHead = (props) => {
+
+interface TableHeadProps {
+  order: Order;
+  orderBy: string;
+  onSort: (event: MouseEvent<unknown>, property: keyof PlayerData) => void;
+}
+const SortableTableHead = (props: PropsWithChildren<TableHeadProps>) => {
   const { order, orderBy, onSort } = props;
 
-  const createSortHandler = (property) => (event) => {
-    onSort(event, property);
-  };
+  const createSortHandler =
+    (property: keyof PlayerData) => (event: MouseEvent<unknown>) => {
+      onSort(event, property);
+    };
 
   return (
     <TableHead>
@@ -72,38 +96,48 @@ const SortableTableHead = (props) => {
   );
 };
 
-const makePlayerData = (data) => ({
+const makePlayerData = (data: PlayerData) => ({
   id: data.id,
   country: (
     <CountryFlag
       svg
       countryCode={data.country}
-      title={countryCodes.find((item) => item.code === data.country).label}
+      title={countryCodes.find((item) => item.code === data.country)?.label}
       style={{ height: "2rem", width: "2rem" }}
     />
   ),
-  full_name: (
-    <LinkRouter to={`/players/${data.id}`}>
-      {`${data.last_name} ${data.first_name}`}
-    </LinkRouter>
+  last_name: (
+    <LinkRouter to={`/players/${data.id}`}>{data.last_name}</LinkRouter>
+  ),
+  first_name: (
+    <LinkRouter to={`/players/${data.id}`}>{data.first_name}</LinkRouter>
   ),
   rating: <Typography>{data.rating}</Typography>,
 });
 
-const PlayersTable = (props) => {
+type Props = {
+  players: PlayerData[];
+};
+const PlayersTable = (props: Props) => {
   const { players } = props;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [order, setOrder] = useState("desc");
-  const [orderBy, setOrderBy] = useState("rating");
+  const [order, setOrder] = useState<Order>("desc");
+  const [orderBy, setOrderBy] = useState<keyof PlayerData>("rating");
 
-  const sortHandler = (event, property) => {
+  const sortHandler = (
+    event: MouseEvent<unknown>,
+    property: keyof PlayerData
+  ) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-  const changePageHandler = (event, newPage) => setPage(newPage);
-  const changeRowsPerPageHandler = (event) => {
+  const changePageHandler = (
+    event: MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => setPage(newPage);
+  const changeRowsPerPageHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };

@@ -18,18 +18,18 @@ import LinkRouter from "../UI/LinkRouter";
 import { countryCodes } from "../../lib/country-codes";
 import { visuallyHidden } from "@mui/utils";
 
-interface PlayerData {
+type PlayerData = {
   id: number;
   country: string;
   last_name: string;
   first_name: string;
   rating: number;
-}
+};
 
-interface Column {
+type Column = {
   id: keyof PlayerData;
   label: string;
-}
+};
 
 const columns: readonly Column[] = [
   { id: "country", label: "Country" },
@@ -56,11 +56,11 @@ const getComparator = (order: Order, orderBy: string) => {
     : (a: any, b: any) => -descendingComparator(a, b, orderBy);
 };
 
-interface TableHeadProps {
+type TableHeadProps = {
   order: Order;
   orderBy: string;
   onSort: (event: MouseEvent<unknown>, property: keyof PlayerData) => void;
-}
+};
 const SortableTableHead = (props: PropsWithChildren<TableHeadProps>) => {
   const { order, orderBy, onSort } = props;
 

@@ -1,5 +1,4 @@
-import { useState, memo } from "react";
-
+import { ChangeEvent, MouseEvent, useState, memo } from "react";
 import {
   Button,
   Dialog,
@@ -11,39 +10,42 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-
-import { countryCodes } from "../../lib/country-codes";
+// @ts-ignore
 import CountryFlag from "react-country-flag";
 
-const ratingToRank = (rating) => {
-  if (rating < 100) {
-    return `${30 - Math.floor(rating / 10)}k`;
-  }
+import { countryCodes } from "../../lib/country-codes";
+import { ratingToRank } from "../../lib/rating";
 
-  if (rating < 2100) {
-    return `${21 - Math.floor(rating / 100)}k`;
-  }
-
-  if (rating < 2700) {
-    return `${Math.floor(rating / 100) - 20}d`;
-  }
-
-  return `${Math.floor((rating - 2700) / 30) + 1}p`;
+type InputData = {
+  last_name: string;
+  first_name: string;
+  country: string;
+  rating: string;
 };
 
-const NewPlayerModal = (props) => {
-  const [playerData, setPlayerData] = useState({
+type Props = {
+  onAddPlayer: (playerData: InputData) => Promise<void>;
+  open: boolean;
+  onClose: () => void;
+};
+
+const NewPlayerModal = (props: Props) => {
+  const [playerData, setPlayerData] = useState<InputData>({
     last_name: "",
     first_name: "",
     country: "",
     rating: "",
   });
 
-  const handleFieldUpdate = (key) => (event) => {
-    setPlayerData((prevState) => ({ ...prevState, [key]: event.target.value }));
-  };
+  const handleFieldUpdate =
+    (key: keyof InputData) => (event: ChangeEvent<HTMLInputElement>) => {
+      setPlayerData((prevState) => ({
+        ...prevState,
+        [key]: event.target.value,
+      }));
+    };
 
-  const submitHandler = async (event) => {
+  const submitHandler = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     await props.onAddPlayer(playerData);
     props.onClose();
@@ -100,7 +102,7 @@ const NewPlayerModal = (props) => {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                {ratingToRank(playerData.rating)}
+                {ratingToRank(parseInt(playerData.rating))}
               </InputAdornment>
             ),
           }}

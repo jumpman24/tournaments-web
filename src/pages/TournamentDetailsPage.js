@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useFetch } from "use-http";
 import {
-  Avatar,
   Card,
   CardContent,
   CircularProgress,

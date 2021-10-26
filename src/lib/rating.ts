@@ -1,5 +1,4 @@
 export const ratingToRank = (rating: number): string => {
-  let rank;
   if (rating < 100) {
     return `${30 - Math.floor(rating / 10)}k`;
   }

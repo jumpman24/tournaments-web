@@ -1,11 +1,16 @@
-import React, { PropsWithChildren } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { Link } from "@mui/material";
+import React, { forwardRef } from "react";
+import {
+  Link as RouterLink,
+  LinkProps as RouterLinkProps,
+} from "react-router-dom";
+import { Link, LinkProps } from "@mui/material";
 
-type Props = { to: string };
+type Props = RouterLinkProps & LinkProps;
 
-const LinkRouter = (props: PropsWithChildren<Props>) => (
-  <Link underline="hover" component={RouterLink} {...props} />
-);
+const LinkRouter = forwardRef<HTMLInputElement, Props>((props, ref) => (
+  <Link ref={ref} underline="hover" component={RouterLink} {...props}>
+    {props.children}
+  </Link>
+));
 
 export default LinkRouter;
